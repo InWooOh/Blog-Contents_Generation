@@ -8,3 +8,4 @@ faiss-cpu
 rank_bm25
 docx2txt
 chromadb
+protobuf==3.20.*
