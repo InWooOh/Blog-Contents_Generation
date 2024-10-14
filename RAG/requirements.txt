@@ -1,0 +1,8 @@
+openai
+langchain_community
+langchain_openai
+langchain
+streamlit
+tiktoken
+prompt
+RAG_prompt
