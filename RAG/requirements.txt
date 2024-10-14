@@ -4,5 +4,3 @@ langchain_openai
 langchain
 streamlit
 tiktoken
-prompt
-RAG_prompt
