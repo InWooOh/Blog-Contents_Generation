@@ -62,4 +62,4 @@ if btn_submit:
             st.write(prompt_text)
 
         except Exception as e:  # 예외 처리
-            st.error(f"⚠️ API 키가 잘못되었거나 오류가 발생했습니다! 다시 시도해주세요.")
+            st.error(f"⚠️ API 키가 잘못되었거나 오류가 발생했습니다! 다시 시도해주세요. 오류: {str(e)}")
