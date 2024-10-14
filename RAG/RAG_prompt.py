@@ -23,8 +23,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         curriculum_list.append(item.split('-'))
 
     ###########################################################################################################################################
+    # 현재 파일의 절대 경로 가져오기
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(current_dir, "Curriculum 정보.csv")
+
     # 커리큘럼 문서
-    loader = CSVLoader("./Curriculum 정보.csv", csv_args={"fieldnames": ["과정명", "난이도", "대상", "분류1", "분류2", "세부 내용", "과정 분류"]}, encoding="utf-8-sig")
+    loader = CSVLoader(csv_path, csv_args={"fieldnames": ["과정명", "난이도", "대상", "분류1", "분류2", "세부 내용", "과정 분류"]}, encoding="utf-8-sig")
     data_커리큘럼 = loader.load()
 
     vectorstore1 = FAISS.from_documents(documents=data_커리큘럼, embedding=OpenAIEmbeddings(model="text-embedding-3-small"))
