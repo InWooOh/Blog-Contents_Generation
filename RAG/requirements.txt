@@ -6,3 +6,4 @@ streamlit
 tiktoken
 faiss-cpu
 rank_bm25
+docx2txt
