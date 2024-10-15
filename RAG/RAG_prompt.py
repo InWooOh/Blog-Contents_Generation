@@ -10,7 +10,7 @@ from langchain_pinecone import PineconeVectorStore
 from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.retrievers.self_query.base import SelfQueryRetriever
 from langchain.prompts import PromptTemplate
-import os, re
+import os, re, time
 import tiktoken
 
 def generate(Lecture_Type, Target_Audience, curriculum, API_key):
@@ -130,11 +130,11 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
     )
-
+    
+    time.sleep(1)
     vectorstore3 = PineconeVectorStore.from_documents(
         data_QnA, embeddings, index_name="blog-contents"
     )
-
 
     # 메타 데이터에 대한 설명 추가
     metadata_field_info = [
@@ -147,7 +147,6 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     document_content_description = "QnA of a training course"
 
-
     llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
     # 태그가 '공통' 인 문서 찾기
@@ -159,8 +158,8 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         enable_limit=True,
         search_kwargs={"k": 11}     # 공통인 문서의 개수
     )
-
-    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
+    
+    time.sleep(3)
     qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
     print(qna_list_공통)
 
@@ -172,7 +171,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         metadata_field_info,
         enable_limit=True
     )
-
+    
     qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
     print(qna_list_비전공자)
 
