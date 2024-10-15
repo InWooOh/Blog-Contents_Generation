@@ -7,7 +7,4 @@ tiktoken
 faiss-cpu
 rank_bm25
 docx2txt
-chromadb==0.5.12
 protobuf==4.25.5
-sqlite3>=3.35.0
-pysqlite3-binary
