@@ -1,4 +1,3 @@
-python==3.10.14
 openai
 langchain_community
 langchain_openai
