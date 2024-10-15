@@ -49,11 +49,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     docs_list = []  # docs를 저장할 리스트 초기화
 
     for item in curriculum_list:  # 입력값의 각 요소에 대해 반복
-        query = f"과정명: {Lecture_Type}\n분류2: {item[1]}\n과정 분류: {item[0]}"  # 각 요소에 대해 쿼리 생성
-        docs = ensemble_retriever.invoke(query)
-        docs_list.extend(docs)  # 검색된 docs를 리스트에 추가
-
-
+        분류2_list = item[1].split(',')  # 분류2를 ','로 분리
+        for 분류2 in 분류2_list:  # 분리된 각 분류2에 대해 반복
+            query = f"과정명: {Lecture_Type}\n분류2: {분류2.strip()}\n과정 분류: {item[0]}"  # 각 요소에 대해 쿼리 생성
+            docs = ensemble_retriever.invoke(query)
+            docs_list.extend(docs)  # 검색된 docs를 리스트에 추가
+    
     # 세부 내용 추출 후 중복 문서는 제거
     detailed_contents = list(set(doc.page_content.split('분류1: ')[1] for doc in docs_list if '분류1: ' in doc.page_content))
 
