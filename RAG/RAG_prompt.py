@@ -257,7 +257,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     )
     
     # curriculum.content와 qna_contents_공통 결합
-    final_content = f"{curriculum.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
+    final_content = f"{curriculum_ge.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
     
     ###########################################################################################################################################
     # 토큰 비용 측정하기
