@@ -159,7 +159,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         search_kwargs={"k": 11}     # 공통인 문서의 개수
     )
     
-    time.sleep(3)
+    time.sleep(7)
     qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
     print(qna_list_공통)
 
