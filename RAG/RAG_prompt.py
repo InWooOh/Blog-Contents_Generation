@@ -148,6 +148,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
+    time.sleep(8)
     # 태그가 '공통' 인 문서 찾기
     retriever = SelfQueryRetriever.from_llm(
         llm,
@@ -158,24 +159,24 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         search_kwargs={"k": 11}     # 공통인 문서의 개수
     )
     
-    time.sleep(10)
-    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
-    print(qna_list_공통)
-
-    # 태그가 '특화', '비전공자' 인 문서 찾기
+    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")     
+    qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
+    qna_list_특화 = retriever.invoke("custom_tag가 '특화' 인 문서들을 모두 찾아주세요.")  
+    ###########################################################################################################################################
+    # 태그가 '공통' 인 문서 찾기
     retriever = SelfQueryRetriever.from_llm(
         llm,
         vectorstore3,
         document_content_description,
         metadata_field_info,
-        enable_limit=True
+        enable_limit=True,
+        search_kwargs={"k": 11}     # 공통인 문서의 개수
     )
     
+    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
     qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
-    print(qna_list_비전공자)
-
     qna_list_특화 = retriever.invoke("custom_tag가 '특화' 인 문서들을 모두 찾아주세요.")  
-    print(qna_list_특화)
+    ###########################################################################################################################################    
 
     # 세부 내용 추출
     qna_contents_공통 = [doc.page_content for doc in qna_list_공통]
@@ -187,7 +188,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     # 프롬프트 템플릿 생성
     prompt_template = PromptTemplate(
-        input_variables=["course_name", "main_topic", "Target_Audience", "date", "apply_form", "detailed_contents", "qna_contents_공통", "qna_contents_비전공자", "qna_contents_특화"],
+        input_variables=["course_name", "main_topic", "Target_Audience", "date", "apply_form", "detailed_contents", "qna_contents_비전공자", "qna_contents_특화"],
         template="""
         당신은 교육팀의 마케팅 전문가입니다. 아래의 형식을 참고하여 IT 강의에 대한 홍보 문구를 자세히 작성하세요.
         홍보 문구에는 이모티콘을 활용하세요.
@@ -221,8 +222,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     # LLMChain 생성
     chain = prompt_template | llm  
     # 커리큘럼 생성
-    curriculum = chain.invoke(  
-        {
+    curriculum = chain.invoke({
             "course_name": Lecture_Type,
             "main_topic": curriculum,
             "Target_Audience": Target_Audience,
@@ -253,11 +253,10 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
     qna_contents_공통_str = "\n\n".join(
         [f"- **질문**: {qna.split('대답: ')[0].strip()}\n  - **대답**: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
-    )  # qna_contents_공통 리스트를 문자열로 변환
+    )
     
     # curriculum.content와 qna_contents_공통 결합
     final_content = f"{curriculum.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
-
     
     ###########################################################################################################################################
     # 토큰 비용 측정하기
