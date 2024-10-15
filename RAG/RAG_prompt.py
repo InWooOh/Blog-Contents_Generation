@@ -96,7 +96,8 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     
     # Q&A 문서
     index_name = "blog-contents"
-    os.environ['PINECONE_API_KEY'] = os.getenv("PINECONE_API_KEY")  # 환경 변수에서 API 키 가져오기
+    os.environ['PINECONE_API_KEY'] = "b887aced-9ef7-4af5-97c0-d5c8689889e2"
+    # os.environ['PINECONE_API_KEY'] = os.getenv("PINECONE_API_KEY")  # 환경 변수에서 API 키 가져오기
     pc = Pinecone()
 
     loader = CSVLoader(csv_path2, csv_args={"fieldnames": ["질문", "대답", "태그"]}, encoding='utf-8-sig')
