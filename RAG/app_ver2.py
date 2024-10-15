@@ -17,15 +17,11 @@ with st.sidebar:
     st.header("🌟IT 강의 홍보 콘텐츠 생성하기")
 
     # 텍스트 형태의 input
-    Lecture_Type = st.text_area("Q1. 강의 종류를 입력하세요.",
-                               placeholder="ex) 파이썬을 활용한 금융 데이터 분석", 
-                               max_chars=30,
-                               height=100)
+    Lecture_Type = st.text_input("Q1. 강의 종류를 입력하세요.",
+                               placeholder="ex) 파이썬을 활용한 금융 데이터 분석")
 
-    Target_Audience = st.text_area("Q2. 수강 대상을 입력하세요.",
-                               placeholder="ex) 대학생, 비전공자, 인턴", 
-                               max_chars=30,
-                               height=100)
+    Target_Audience = st.text_input("Q2. 수강 대상을 입력하세요.",
+                               placeholder="ex) 대학생, 비전공자, 인턴")
     
     curriculum = st.text_area("Q3. 커리큘럼을 입력하세요",
                                placeholder="'Part 제목 - 세부내용' 형식으로 입력하세요. ex) 분석 역량 - 머신러닝, 데이터 시각화", 
