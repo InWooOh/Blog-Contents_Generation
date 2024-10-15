@@ -23,8 +23,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         curriculum_list.append(item.split('-'))
 
     ###########################################################################################################################################
+    # 현재 파일의 절대 경로 가져오기
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path = os.path.join(current_dir, "Curriculum 정보.csv")
+    
     # 커리큘럼 문서
-    loader = CSVLoader("C:/Users/inwoo/Desktop/핀인 사이트/블로그 홍보 문구 제작/2차 자료/Curriculum 정보.csv", csv_args={"fieldnames": ["과정명", "난이도", "대상", "분류1", "분류2", "세부 내용", "과정 분류"]}, encoding="utf-8-sig")
+    loader = CSVLoader(csv_path, csv_args={"fieldnames": ["과정명", "난이도", "대상", "분류1", "분류2", "세부 내용", "과정 분류"]}, encoding="utf-8-sig")
     data_커리큘럼 = loader.load()
 
     vectorstore1 = FAISS.from_documents(documents=data_커리큘럼, embedding=OpenAIEmbeddings(model="text-embedding-3-small"))
@@ -54,8 +58,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     detailed_contents = list(set(doc.page_content.split('분류1: ')[1] for doc in docs_list if '분류1: ' in doc.page_content))
 
     ###########################################################################################################################################
+    # 현재 파일의 절대 경로 가져오기
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    docs_path = os.path.join(current_dir, "[예시 템플릿]실무 프로젝트 기반 LLM 서비스 개발자 양성과정.docx")
+    
     # 예시 템플릿 문서
-    loader = Docx2txtLoader("C:/Users/inwoo/Desktop/핀인 사이트/블로그 홍보 문구 제작/2차 자료/[예시 템플릿]실무 프로젝트 기반 LLM 서비스 개발자 양성과정.docx")
+    loader = Docx2txtLoader(docs_path)
     data_템플릿 = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -81,12 +89,16 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     인턴공고 = text_인턴[0][0].page_content
 
     ###########################################################################################################################################
+    # 현재 파일의 절대 경로 가져오기
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_path2 = os.path.join(current_dir, "Q&A 문서.csv")
+    
     # Q&A 문서
     index_name = "blog-contents"
     os.environ['PINECONE_API_KEY'] = "b887aced-9ef7-4af5-97c0-d5c8689889e2"
     pc = Pinecone()
 
-    loader = CSVLoader("C:/Users/inwoo/Desktop/핀인 사이트/블로그 홍보 문구 제작/2차 자료/Q&A 문서.csv", csv_args={"fieldnames": ["질문", "대답", "태그"]}, encoding='utf-8-sig')
+    loader = CSVLoader(csv_path2, csv_args={"fieldnames": ["질문", "대답", "태그"]}, encoding='utf-8-sig')
     data_QnA = loader.load()
 
     # 메타데이터 추가 및 "태그: " 부분 제거
