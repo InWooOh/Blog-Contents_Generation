@@ -8,3 +8,4 @@ faiss-cpu
 rank_bm25
 docx2txt
 protobuf==4.25.5
+pinecone-client
