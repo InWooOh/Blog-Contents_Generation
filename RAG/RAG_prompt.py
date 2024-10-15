@@ -214,7 +214,6 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         #### 수료 혜택 및 차별점
         - {intern}을 참고해서 작성하세요. 이때 인턴 주 업무와 세부 내용은 {course_name}를 고려해서 적절하게 작성하세요.
         #### Q&A
-        - 반드시 {qna_contents_공통}의 경우 모두 작성하세요.
         - 반드시 {qna_contents_비전공자}의 경우 모두 작성하세요.
         - {qna_contents_특화}의 경우 질문에 대한 대답은 {course_name}과 커리큘럼에 맞게 작성하세요.
         """
@@ -232,7 +231,6 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
             "apply_form": 신청안내,
             "intern": 인턴공고,
             "detailed_contents": detailed_contents,
-            "qna_contents_공통": qna_contents_공통,
             "qna_contents_비전공자": qna_contents_비전공자,
             "qna_contents_특화": qna_contents_특화
         }
@@ -247,13 +245,21 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         apply_form= 신청안내,
         intern= 인턴공고,
         detailed_contents= detailed_contents,
-        qna_contents_공통= qna_contents_공통,
         qna_contents_비전공자= qna_contents_비전공자,
         qna_contents_특화= qna_contents_특화
     )
 
-    prompt_text = curriculum.content 
+    # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
+    qna_contents_공통_str = "\n\n".join(
+        [f"**질문**: {qna.split('대답: ')[0].strip()}\n  - **대답**: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
+    )  # qna_contents_공통 리스트를 문자열로 변환
+    
+    # curriculum.content와 qna_contents_공통 결합
+    final_content = f"{curriculum.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
+    
+    prompt_text = final_content 
 
+    
     ###########################################################################################################################################
     # 토큰 비용 측정하기
     encoder = tiktoken.get_encoding("cl100k_base")
