@@ -1,3 +1,4 @@
+python==3.10.14
 openai
 langchain_community
 langchain_openai
@@ -7,6 +8,5 @@ tiktoken
 faiss-cpu
 rank_bm25
 docx2txt
-chromadb
-protobuf==3.20.*
-pysqlite3-binary
+chromadb==0.5.12
+protobuf==4.25.5
