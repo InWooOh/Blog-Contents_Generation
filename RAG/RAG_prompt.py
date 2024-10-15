@@ -246,7 +246,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
     qna_contents_공통_str = "\n\n".join(
-        [f"- **질문**: {qna.split('대답: ')[0].replace('질문: ', '').strip()}\n  - 대답: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
+        [f"- **질문: {qna.split('대답: ')[0].replace('질문: ', '').strip()}**\n  - 대답: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
     )
     
     # curriculum.content와 qna_contents_공통 결합
