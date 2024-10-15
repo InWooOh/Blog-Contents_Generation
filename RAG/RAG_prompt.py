@@ -54,7 +54,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
             query = f"과정명: {Lecture_Type}\n분류2: {분류2.strip()}\n과정 분류: {item[0]}"  # 각 요소에 대해 쿼리 생성
             docs = ensemble_retriever.invoke(query)
             docs_list.extend(docs)  # 검색된 docs를 리스트에 추가
-    
+
     # 세부 내용 추출 후 중복 문서는 제거
     detailed_contents = list(set(doc.page_content.split('분류1: ')[1] for doc in docs_list if '분류1: ' in doc.page_content))
 
@@ -96,7 +96,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     
     # Q&A 문서
     index_name = "blog-contents"
-    os.environ['PINECONE_API_KEY'] = "b887aced-9ef7-4af5-97c0-d5c8689889e2"
+    os.environ['PINECONE_API_KEY'] = os.getenv("PINECONE_API_KEY")  # 환경 변수에서 API 키 가져오기
     pc = Pinecone()
 
     loader = CSVLoader(csv_path2, csv_args={"fieldnames": ["질문", "대답", "태그"]}, encoding='utf-8-sig')
@@ -131,10 +131,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         metric="cosine",
         spec=ServerlessSpec(cloud="aws", region="us-east-1"),
     )
-    
+
+
     vectorstore3 = PineconeVectorStore.from_documents(
         data_QnA, embeddings, index_name="blog-contents"
     )
+
 
     # 메타 데이터에 대한 설명 추가
     metadata_field_info = [
@@ -147,9 +149,11 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     document_content_description = "QnA of a training course"
 
+
     llm = ChatOpenAI(model_name="gpt-4o-mini", temperature=0)
 
-    time.sleep(8)
+    time.sleep(10)
+
     # 태그가 '공통' 인 문서 찾기
     retriever = SelfQueryRetriever.from_llm(
         llm,
@@ -159,25 +163,14 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         enable_limit=True,
         search_kwargs={"k": 11}     # 공통인 문서의 개수
     )
-    
-    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")     
-    qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
-    qna_list_특화 = retriever.invoke("custom_tag가 '특화' 인 문서들을 모두 찾아주세요.")  
-    ###########################################################################################################################################
-    # 태그가 '공통' 인 문서 찾기
-    retriever = SelfQueryRetriever.from_llm(
-        llm,
-        vectorstore3,
-        document_content_description,
-        metadata_field_info,
-        enable_limit=True,
-        search_kwargs={"k": 11}     # 공통인 문서의 개수
-    )
-    
+
     qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
     qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
     qna_list_특화 = retriever.invoke("custom_tag가 '특화' 인 문서들을 모두 찾아주세요.")  
-    ###########################################################################################################################################    
+
+    qna_list_공통 = retriever.invoke("custom_tag가 '공통' 인 문서들을 모두 찾아주세요.")  
+    qna_list_비전공자 = retriever.invoke(f"custom_tag가 '{Target_Audience}' 인 문서들을 모두 찾아주세요." )
+    qna_list_특화 = retriever.invoke("custom_tag가 '특화' 인 문서들을 모두 찾아주세요.")  
 
     # 세부 내용 추출
     qna_contents_공통 = [doc.page_content for doc in qna_list_공통]
@@ -217,13 +210,15 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         #### Q&A
         - 반드시 {qna_contents_비전공자}의 경우 모두 작성하세요.
         - {qna_contents_특화}의 경우 질문에 대한 대답은 {course_name}과 커리큘럼에 맞게 작성하세요.
+        - 질문과 대답은 각각에 대해 불릿 형태로 작성하고, 이외의 어떤 정보도 출력하지 마세요. 
         """
     )
 
     # LLMChain 생성
     chain = prompt_template | llm  
     # 커리큘럼 생성
-    curriculum_ge = chain.invoke({
+    curriculum_ge = chain.invoke(  
+        {
             "course_name": Lecture_Type,
             "main_topic": curriculum,
             "Target_Audience": Target_Audience,
@@ -253,12 +248,12 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
 
     # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
     qna_contents_공통_str = "\n\n".join(
-        [f"- **질문**: {qna.split('대답: ')[0].strip()}\n  - **대답**: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
+        [f"- **질문**: {qna.split('대답: ')[0].replace('질문: ', '').strip()}\n  - 대답: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
     )
     
     # curriculum.content와 qna_contents_공통 결합
     final_content = f"{curriculum_ge.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
-    
+
     ###########################################################################################################################################
     # 토큰 비용 측정하기
     encoder = tiktoken.get_encoding("cl100k_base")
