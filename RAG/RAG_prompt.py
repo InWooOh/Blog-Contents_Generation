@@ -223,7 +223,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     # LLMChain 생성
     chain = prompt_template | llm  
     # 커리큘럼 생성
-    curriculum = chain.invoke({
+    curriculum_ge = chain.invoke({
             "course_name": Lecture_Type,
             "main_topic": curriculum,
             "Target_Audience": Target_Audience,
@@ -249,7 +249,7 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         qna_contents_특화= qna_contents_특화
     )
 
-    prompt_text = curriculum.content
+    prompt_text = curriculum_ge.content
 
     # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
     qna_contents_공통_str = "\n\n".join(
