@@ -249,15 +249,15 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
         qna_contents_특화= qna_contents_특화
     )
 
+    prompt_text = curriculum.content
+
     # qna_contents_공통의 각 항목을 마크다운 형식으로 변환
     qna_contents_공통_str = "\n\n".join(
-        [f"**질문**: {qna.split('대답: ')[0].strip()}\n  - **대답**: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
+        [f"- **질문**: {qna.split('대답: ')[0].strip()}\n  **대답**: {qna.split('대답: ')[1].strip()}" for qna in qna_contents_공통]
     )  # qna_contents_공통 리스트를 문자열로 변환
     
     # curriculum.content와 qna_contents_공통 결합
     final_content = f"{curriculum.content}\n\n{qna_contents_공통_str}"  # 두 내용을 결합 
-    
-    prompt_text = final_content 
 
     
     ###########################################################################################################################################
@@ -267,4 +267,4 @@ def generate(Lecture_Type, Target_Audience, curriculum, API_key):
     output_token = len(encoder.encode(prompt_text))
     expected_sum_bill = (input_token * (0.005/1000)) + (output_token * (0.015/1000))
 
-    return prompt_text, expected_sum_bill
+    return final_content, expected_sum_bill
