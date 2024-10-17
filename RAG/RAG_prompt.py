@@ -319,8 +319,8 @@ def llm_chain(prompt_template, Lecture_Type, Target_Audience, curriculum, course
         apply_form= apply_form,
         intern= intern_info,
         detailed_contents= detailed_contents,
-        qna_contents_비전공자= qna_contents_non_major,
-        qna_contents_특화= qna_contents_specialization
+        qna_contents_non_major= qna_contents_non_major,
+        qna_contents_specialization= qna_contents_specialization
     )
     
     return curriculum_ge.content, input_prompt
