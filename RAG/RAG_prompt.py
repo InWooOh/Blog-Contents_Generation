@@ -12,6 +12,7 @@ from langchain.retrievers.self_query.base import SelfQueryRetriever
 from langchain.prompts import PromptTemplate
 import os, re, time
 import tiktoken
+import streamlit as st
 
 
 def Vector_DB_Curriculum(current_dir):
@@ -72,7 +73,7 @@ def Vector_DB_QnA(current_dir):
 
     # Q&A 문서
     index_name = "blog-contents"
-    os.environ['PINECONE_API_KEY'] = "b887aced-9ef7-4af5-97c0-d5c8689889e2"
+    os.environ['PINECONE_API_KEY'] = st.secrets["PINECONE_API_KEY"]
     # os.environ['PINECONE_API_KEY'] = os.getenv("PINECONE_API_KEY")  # 환경 변수에서 API 키 가져오기
     pc = Pinecone()
 
